@@ -102,7 +102,7 @@ export async function getWorkshops() {
     });
 
     if (!workshops.length) {
-      return fallbackWorkshops;
+      return [];
     }
 
     return workshops.map(normalizeWorkshop);

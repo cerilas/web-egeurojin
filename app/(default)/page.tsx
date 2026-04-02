@@ -24,7 +24,7 @@ export const metadata = {
   },
 };
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 const organizationJsonLd = {
   "@context": "https://schema.org",

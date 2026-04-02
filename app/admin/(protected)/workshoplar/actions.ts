@@ -60,13 +60,15 @@ export async function saveWorkshopAction(
   }
 
   revalidatePath("/admin/workshoplar");
-  revalidatePath("/workshoplar");
+  revalidatePath("/workshoplar", "layout");
+  revalidatePath("/", "layout");
   redirect("/admin/workshoplar");
 }
 
 export async function deleteWorkshopAction(id: string) {
   await prisma.workshop.delete({ where: { id } });
   revalidatePath("/admin/workshoplar");
-  revalidatePath("/workshoplar");
+  revalidatePath("/workshoplar", "layout");
+  revalidatePath("/", "layout");
   redirect("/admin/workshoplar");
 }
