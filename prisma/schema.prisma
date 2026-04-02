@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workshop {
+  id               String               @id @default(cuid())
+  slug             String               @unique
+  title            String
+  teaser           String
+  shortDescription String
+  overview         String               @db.Text
+  agenda           String               @db.Text
+  learningOutcomes String               @db.Text
+  audience         String               @db.Text
+  location         String
+  venue            String
+  startDate        DateTime
+  endDate          DateTime?
+  registrationUrl  String
+  capacity         Int?
+  priceNote        String?
+  heroLabel        String?
+  coverImageUrl    String?
+  gallery          String[]
+  mapEmbedUrl      String?
+  mapAddress       String?
+  published        Boolean              @default(true)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  instructors      WorkshopInstructor[]
+
+  @@index([published, startDate])
+}
+
+model Instructor {
+  id         String               @id @default(cuid())
+  slug       String               @unique
+  name       String
+  role       String
+  bio        String               @db.Text
+  focusAreas String?
+  imageUrl   String?
+  sortOrder  Int                  @default(0)
+  active     Boolean              @default(true)
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  workshops  WorkshopInstructor[]
+
+  @@index([active, sortOrder])
+}
+
+model WorkshopInstructor {
+  workshopId   String
+  instructorId String
+  role         String?
+  sortOrder    Int        @default(0)
+  workshop     Workshop   @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+  instructor   Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@id([workshopId, instructorId])
+  @@index([instructorId])
+}
+
+enum ContactMessageStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+model ContactMessage {
+  id           String               @id @default(cuid())
+  name         String
+  email        String
+  phone        String?
+  organization String?
+  message      String               @db.Text
+  status       ContactMessageStatus @default(NEW)
+  createdAt    DateTime             @default(now())
+
+  @@index([status, createdAt])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}

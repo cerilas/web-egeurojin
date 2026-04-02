@@ -1,0 +1,52 @@
+{
+  "name": "ege-urojinekoloji-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:clean": "killall node 2>/dev/null || true; chmod -R u+w .next 2>/dev/null; find .next -mindepth 1 -exec /bin/rm -rf {} + 2>/dev/null; /bin/rm -rf .next; rm -rf node_modules/.cache 2>/dev/null; next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@prisma/client": "^6.6.0",
+    "@types/node": "^22.13.0",
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3",
+    "aos": "3.0.0-beta.6",
+    "bcryptjs": "^3.0.3",
+    "googleapis": "^171.4.0",
+    "jose": "^6.2.2",
+    "motion": "^12.38.0",
+    "next": "^15.1.11",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/postcss": "^4.0.3",
+    "@types/aos": "^3.0.7",
+    "@types/bcryptjs": "^2.4.6",
+    "postcss": "^8.5.1",
+    "prisma": "^6.6.0",
+    "tailwindcss": "^4.0.3",
+    "tsx": "^4.21.0"
+  },
+  "prisma": {
+    "seed": "node --import tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3"
+  },
+  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
+}
