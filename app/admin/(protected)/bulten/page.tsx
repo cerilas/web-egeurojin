@@ -1,16 +1,45 @@
+import Link from "next/link";
 import { prisma } from "@/lib/db";
 
-export default async function AdminNewsletterPage() {
+const PAGE_SIZE = 25;
+
+export default async function AdminNewsletterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sayfa?: string }>;
+}) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, Number(params.sayfa) || 1);
+  const totalCount = await prisma.newsletterSubscriber.count();
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const page = Math.min(currentPage, totalPages);
+
   const subscribers = await prisma.newsletterSubscriber.findMany({
     orderBy: { createdAt: "desc" },
+    skip: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
   });
+
+  const startIndex = (page - 1) * PAGE_SIZE;
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-stone-800">Bülten Aboneleri</h1>
-        <span className="text-sm text-stone-500">{subscribers.length} abone</span>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-stone-800">Bülten Aboneleri</h1>
+          <p className="mt-1 text-sm text-stone-500">{totalCount} abone</p>
+        </div>
+        <a
+          href="/api/admin/export-subscribers"
+          className="inline-flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 shadow-sm transition hover:bg-stone-50"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Excel İndir
+        </a>
       </div>
+
       <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead className="border-b border-stone-200 bg-stone-50 text-left">
@@ -23,7 +52,7 @@ export default async function AdminNewsletterPage() {
           <tbody className="divide-y divide-stone-100">
             {subscribers.map((sub, index) => (
               <tr key={sub.id} className="hover:bg-stone-50">
-                <td className="px-4 py-3 text-stone-400">{index + 1}</td>
+                <td className="px-4 py-3 text-stone-400">{startIndex + index + 1}</td>
                 <td className="px-4 py-3">
                   <a
                     href={`mailto:${sub.email}`}
@@ -51,6 +80,33 @@ export default async function AdminNewsletterPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-stone-500">
+            Sayfa {page} / {totalPages}
+          </p>
+          <div className="flex gap-2">
+            {page > 1 && (
+              <Link
+                href={`/admin/bulten?sayfa=${page - 1}`}
+                className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50"
+              >
+                ← Önceki
+              </Link>
+            )}
+            {page < totalPages && (
+              <Link
+                href={`/admin/bulten?sayfa=${page + 1}`}
+                className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50"
+              >
+                Sonraki →
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

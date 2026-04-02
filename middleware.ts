@@ -13,8 +13,8 @@ function getSecret() {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Sadece /admin altındaki yolları koru
-  if (!pathname.startsWith("/admin")) {
+  // Sadece /admin ve /api/admin altındaki yolları koru
+  if (!pathname.startsWith("/admin") && !pathname.startsWith("/api/admin")) {
     return NextResponse.next();
   }
 

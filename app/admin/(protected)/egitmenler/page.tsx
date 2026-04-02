@@ -34,8 +34,8 @@ export default async function InstructorsAdminPage() {
           </Link>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
-          <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm">
+          <table className="w-full min-w-[700px] text-left text-sm">
             <thead className="border-b border-stone-200 bg-stone-50">
               <tr>
                 <th className="px-4 py-3 font-semibold text-stone-600">Eğitmen</th>
