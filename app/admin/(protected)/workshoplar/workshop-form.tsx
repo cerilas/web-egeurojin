@@ -1,7 +1,13 @@
 "use client";
 
-import { useActionState, useTransition } from "react";
+import { useState, useActionState, useTransition } from "react";
 import { saveWorkshopAction, deleteWorkshopAction } from "./actions";
+
+type AvailableInstructor = {
+  id: string;
+  name: string;
+  role: string;
+};
 
 type WorkshopFormProps = {
   workshop?: {
@@ -27,7 +33,9 @@ type WorkshopFormProps = {
     mapEmbedUrl: string | null;
     mapAddress: string | null;
     published: boolean;
+    selectedInstructorIds?: string[];
   };
+  allInstructors?: AvailableInstructor[];
 };
 
 function toDateInput(d: Date | null | undefined) {
@@ -39,9 +47,19 @@ function toGalleryInput(images: string[] | null | undefined) {
   return images?.join("\n") ?? "";
 }
 
-export default function WorkshopForm({ workshop }: WorkshopFormProps) {
+export default function WorkshopForm({ workshop, allInstructors = [] }: WorkshopFormProps) {
   const [state, formAction, isPending] = useActionState(saveWorkshopAction, null);
   const [isDeleting, startDelete] = useTransition();
+  const [selectedIds, setSelectedIds] = useState<string[]>(
+    workshop?.selectedInstructorIds ?? [],
+  );
+  const [instructorSearch, setInstructorSearch] = useState("");
+
+  const filteredInstructors = allInstructors.filter(
+    (inst) =>
+      inst.name.toLowerCase().includes(instructorSearch.toLowerCase()) ||
+      inst.role.toLowerCase().includes(instructorSearch.toLowerCase()),
+  );
 
   function handleDelete() {
     if (!workshop) return;
@@ -176,6 +194,100 @@ export default function WorkshopForm({ workshop }: WorkshopFormProps) {
             defaultValue={workshop?.mapEmbedUrl ?? ""} rows={2} />
         </div>
       </section>
+
+      {/* Eğitmenler */}
+      {allInstructors.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-stone-500">
+            Eğitmenler
+          </h2>
+
+          {/* Seçilenler */}
+          {selectedIds.length > 0 && (
+            <div className="mb-3">
+              <p className="mb-2 text-xs font-medium text-stone-500">
+                Seçili ({selectedIds.length})
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {selectedIds.map((id) => {
+                  const inst = allInstructors.find((i) => i.id === id);
+                  if (!inst) return null;
+                  return (
+                    <span
+                      key={id}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800"
+                    >
+                      {inst.name}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedIds((prev) => prev.filter((i) => i !== id))
+                        }
+                        className="ml-0.5 rounded-full p-0.5 text-emerald-600 transition hover:bg-emerald-100 hover:text-emerald-900"
+                      >
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Arama */}
+          <input
+            type="text"
+            placeholder="Eğitmen ara…"
+            value={instructorSearch}
+            onChange={(e) => setInstructorSearch(e.target.value)}
+            className="mb-2 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 placeholder-stone-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+          />
+
+          {/* Liste */}
+          <div className="max-h-64 overflow-y-auto rounded-lg border border-stone-200 bg-white">
+            {filteredInstructors.length === 0 ? (
+              <p className="px-4 py-3 text-sm text-stone-400">Eşleşen eğitmen bulunamadı.</p>
+            ) : (
+              filteredInstructors.map((inst) => {
+                const checked = selectedIds.includes(inst.id);
+                return (
+                  <label
+                    key={inst.id}
+                    className={`flex cursor-pointer items-center gap-3 border-b border-stone-100 px-4 py-2.5 transition last:border-b-0 ${
+                      checked
+                        ? "bg-emerald-50"
+                        : "hover:bg-stone-50"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() =>
+                        setSelectedIds((prev) =>
+                          checked
+                            ? prev.filter((id) => id !== inst.id)
+                            : [...prev, inst.id],
+                        )
+                      }
+                      className="h-4 w-4 shrink-0 rounded border-stone-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-stone-900">{inst.name}</p>
+                      <p className="text-xs text-stone-500">{inst.role}</p>
+                    </div>
+                  </label>
+                );
+              })
+            )}
+          </div>
+
+          {selectedIds.map((id) => (
+            <input key={id} type="hidden" name="instructorIds" value={id} />
+          ))}
+        </section>
+      )}
 
       {/* Butonlar */}
       <div className="flex items-center justify-between border-t border-stone-200 pt-6">

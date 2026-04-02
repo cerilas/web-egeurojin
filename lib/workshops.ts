@@ -45,6 +45,8 @@ function normalizeWorkshop(workshop: {
       slug: string;
       name: string;
       role: string;
+      email: string | null;
+      institution: string | null;
       bio: string;
       focusAreas: string | null;
       imageUrl: string | null;
@@ -77,6 +79,8 @@ function normalizeWorkshop(workshop: {
         slug: instructor.slug,
         name: instructor.name,
         role: role ?? instructor.role,
+        email: instructor.email ?? undefined,
+        institution: instructor.institution ?? undefined,
         bio: instructor.bio,
         focusAreas: instructor.focusAreas ?? undefined,
         imageUrl: instructor.imageUrl ?? undefined,
@@ -153,12 +157,53 @@ export async function getInstructors(): Promise<InstructorSummary[]> {
       slug: instructor.slug,
       name: instructor.name,
       role: instructor.role,
+      email: instructor.email ?? undefined,
+      institution: instructor.institution ?? undefined,
       bio: instructor.bio,
       focusAreas: instructor.focusAreas ?? undefined,
       imageUrl: instructor.imageUrl ?? undefined,
     }));
   } catch {
     return fallbackInstructors;
+  }
+}
+
+export async function getInstructorBySlug(slug: string): Promise<(InstructorSummary & { workshopSlugs: { slug: string; title: string }[] }) | null> {
+  if (!hasDatabaseUrl()) {
+    const found = fallbackInstructors.find((i) => i.slug === slug);
+    return found ? { ...found, workshopSlugs: [] } : null;
+  }
+
+  try {
+    const instructor = await prisma.instructor.findUnique({
+      where: { slug, active: true },
+      include: {
+        workshops: {
+          include: {
+            workshop: { select: { slug: true, title: true, published: true } },
+          },
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+    });
+
+    if (!instructor) return null;
+
+    return {
+      slug: instructor.slug,
+      name: instructor.name,
+      role: instructor.role,
+      email: instructor.email ?? undefined,
+      institution: instructor.institution ?? undefined,
+      bio: instructor.bio,
+      focusAreas: instructor.focusAreas ?? undefined,
+      imageUrl: instructor.imageUrl ?? undefined,
+      workshopSlugs: instructor.workshops
+        .filter((wi) => wi.workshop.published)
+        .map((wi) => ({ slug: wi.workshop.slug, title: wi.workshop.title })),
+    };
+  } catch {
+    return null;
   }
 }
 

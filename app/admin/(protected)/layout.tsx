@@ -7,6 +7,7 @@ import { logoutAction } from "./auth-actions";
 const navLinks = [
   { href: "/admin", label: "Genel Bakış" },
   { href: "/admin/workshoplar", label: "Workshoplar" },
+  { href: "/admin/egitmenler", label: "Eğitmenler" },
   { href: "/admin/mesajlar", label: "İletişim Mesajları" },
   { href: "/admin/bulten", label: "Bülten Aboneleri" },
   { href: "/admin/kullanicilar", label: "Kullanıcılar" },

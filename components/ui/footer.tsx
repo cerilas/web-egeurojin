@@ -37,6 +37,14 @@ export default function Footer({ border = false }: { border?: boolean }) {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  className="text-stone-600 transition hover:text-stone-900"
+                  href="/ekip-egitmenler"
+                >
+                  Eğitmenler
+                </Link>
+              </li>
             </ul>
           </div>
 

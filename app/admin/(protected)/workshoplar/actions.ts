@@ -53,10 +53,32 @@ export async function saveWorkshopAction(
     return { error: "Slug ve başlık zorunludur." };
   }
 
+  const instructorIds = formData.getAll("instructorIds") as string[];
+
   if (id) {
     await prisma.workshop.update({ where: { id }, data });
+    // Update instructor relationships
+    await prisma.workshopInstructor.deleteMany({ where: { workshopId: id } });
+    if (instructorIds.length) {
+      await prisma.workshopInstructor.createMany({
+        data: instructorIds.map((instructorId, index) => ({
+          workshopId: id,
+          instructorId,
+          sortOrder: index,
+        })),
+      });
+    }
   } else {
-    await prisma.workshop.create({ data });
+    const created = await prisma.workshop.create({ data });
+    if (instructorIds.length) {
+      await prisma.workshopInstructor.createMany({
+        data: instructorIds.map((instructorId, index) => ({
+          workshopId: created.id,
+          instructorId,
+          sortOrder: index,
+        })),
+      });
+    }
   }
 
   revalidatePath("/admin/workshoplar");

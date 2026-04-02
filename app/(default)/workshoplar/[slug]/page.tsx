@@ -156,60 +156,11 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
               </ul>
             </article>
 
-            <article className="rounded-4xl border border-stone-200 bg-white p-7 shadow-lg shadow-stone-950/5">
-              <h2 className="text-2xl font-semibold text-stone-900">Kimler İçin?</h2>
-              <p className="mt-4 text-base leading-8 text-stone-600">{workshop.audience}</p>
-            </article>
-
             {/* Photo Gallery */}
             {workshop.gallery && workshop.gallery.length > 0 ? (
               <WorkshopGallery images={workshop.gallery} />
             ) : null}
 
-            {/* Map */}
-            {(workshop.mapEmbedUrl ?? workshop.mapAddress) ? (
-              <article className="rounded-4xl border border-stone-200 bg-white p-7 shadow-lg shadow-stone-950/5">
-                <h2 className="text-2xl font-semibold text-stone-900">Konum</h2>
-                {workshop.mapAddress ? (
-                  <p className="mt-3 flex items-start gap-2 text-base text-stone-600">
-                    <svg
-                      className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={1.5}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-                      />
-                    </svg>
-                    {workshop.mapAddress}
-                  </p>
-                ) : null}
-                {workshop.mapEmbedUrl ? (
-                  <div className="mt-5 overflow-hidden rounded-2xl">
-                    <iframe
-                      src={workshop.mapEmbedUrl}
-                      width="100%"
-                      height="320"
-                      style={{ border: 0 }}
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title={`${workshop.venue} harita konumu`}
-                      className="block"
-                    />
-                  </div>
-                ) : null}
-              </article>
-            ) : null}
           </div>
 
           <aside className="space-y-6">
@@ -267,6 +218,57 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                 </p>
               )}
             </div>
+
+            {/* Kimler İçin */}
+            <div className="rounded-4xl border border-stone-200 bg-white p-6 shadow-lg shadow-stone-950/5">
+              <h2 className="text-xl font-semibold text-stone-900">Kimler İçin?</h2>
+              <p className="mt-4 text-sm leading-7 text-stone-600">{workshop.audience}</p>
+            </div>
+
+            {/* Konum */}
+            {(workshop.mapEmbedUrl ?? workshop.mapAddress) ? (
+              <div className="rounded-4xl border border-stone-200 bg-white p-6 shadow-lg shadow-stone-950/5">
+                <h2 className="text-xl font-semibold text-stone-900">Konum</h2>
+                {workshop.mapAddress ? (
+                  <p className="mt-3 flex items-start gap-2 text-sm text-stone-600">
+                    <svg
+                      className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                      />
+                    </svg>
+                    {workshop.mapAddress}
+                  </p>
+                ) : null}
+                {workshop.mapEmbedUrl ? (
+                  <div className="mt-4 overflow-hidden rounded-2xl">
+                    <iframe
+                      src={workshop.mapEmbedUrl}
+                      width="100%"
+                      height="200"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={`${workshop.venue} harita konumu`}
+                      className="block"
+                    />
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </aside>
         </div>
       </section>

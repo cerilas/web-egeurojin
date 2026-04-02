@@ -1,6 +1,13 @@
+import { prisma } from "@/lib/db";
 import WorkshopForm from "../workshop-form";
 
-export default function YeniWorkshopPage() {
+export default async function YeniWorkshopPage() {
+  const allInstructors = await prisma.instructor.findMany({
+    where: { active: true },
+    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+    select: { id: true, name: true, role: true },
+  });
+
   return (
     <div>
       <div className="mb-8 flex items-center gap-3">
@@ -11,7 +18,7 @@ export default function YeniWorkshopPage() {
         <h1 className="text-2xl font-bold text-stone-800">Yeni Workshop</h1>
       </div>
       <div className="rounded-xl border border-stone-200 bg-white p-8 shadow-sm">
-        <WorkshopForm />
+        <WorkshopForm allInstructors={allInstructors} />
       </div>
     </div>
   );

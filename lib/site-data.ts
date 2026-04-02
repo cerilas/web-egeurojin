@@ -2,6 +2,8 @@ export type InstructorSummary = {
   slug: string;
   name: string;
   role: string;
+  email?: string;
+  institution?: string;
   bio: string;
   focusAreas?: string;
   imageUrl?: string;
