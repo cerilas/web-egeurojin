@@ -109,7 +109,19 @@ export async function getWorkshops() {
       return [];
     }
 
-    return workshops.map(normalizeWorkshop);
+    const now = new Date();
+    const normalized = workshops.map(normalizeWorkshop);
+
+    // Upcoming: closest date first; Past: most recent first
+    const upcoming = normalized
+      .filter((w) => new Date(w.endDate ?? w.startDate) >= now)
+      .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+    const past = normalized
+      .filter((w) => new Date(w.endDate ?? w.startDate) < now)
+      .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+
+    return [...upcoming, ...past];
   } catch {
     return fallbackWorkshops;
   }
