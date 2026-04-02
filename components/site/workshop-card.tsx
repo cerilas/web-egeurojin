@@ -9,8 +9,10 @@ type WorkshopCardProps = {
 };
 
 export default function WorkshopCard({ workshop }: WorkshopCardProps) {
+  const isPast = new Date(workshop.endDate ?? workshop.startDate) < new Date();
+
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-4xl border border-stone-200/80 bg-white/90 shadow-lg shadow-stone-950/5 transition duration-300 hover:-translate-y-1 hover:border-emerald-300">
+    <article className={`group flex h-full flex-col overflow-hidden rounded-4xl border border-stone-200/80 bg-white/90 shadow-lg shadow-stone-950/5 transition duration-300 ${isPast ? "opacity-60" : "hover:-translate-y-1 hover:border-emerald-300"}`}>
       {workshop.coverImageUrl ? (
         <div className="aspect-16/10 w-full overflow-hidden bg-stone-100">
           <img
@@ -56,7 +58,13 @@ export default function WorkshopCard({ workshop }: WorkshopCardProps) {
 
         <div className="mt-6 flex items-center justify-between gap-4 pt-4">
           <span className="text-sm text-stone-500">
-            {workshop.capacity ? `${workshop.capacity} kişilik kontenjan` : "Kontenjan duyurulacaktır"}
+            {isPast ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-stone-400">
+                Tamamlandı
+              </span>
+            ) : (
+              workshop.capacity ? `${workshop.capacity} kişilik kontenjan` : "Kontenjan duyurulacaktır"
+            )}
           </span>
           <Link
             href={`/workshoplar/${workshop.slug}`}

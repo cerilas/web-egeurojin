@@ -67,6 +67,8 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const isPast = new Date(workshop.endDate ?? workshop.startDate) < new Date();
+
   const eventJsonLd = {
     "@context": "https://schema.org",
     "@type": "EducationEvent",
@@ -236,12 +238,18 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   {workshop.priceNote}
                 </p>
               ) : null}
-              <Link
-                href={workshop.registrationUrl}
-                className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-800"
-              >
-                Ön Kayıt İçin İletişime Geç
-              </Link>
+              {isPast ? (
+                <span className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-stone-200 px-5 py-3 text-sm font-medium text-stone-500">
+                  Bu workshop tamamlanmıştır
+                </span>
+              ) : (
+                <Link
+                  href={workshop.registrationUrl}
+                  className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-800"
+                >
+                  Ön Kayıt İçin İletişime Geç
+                </Link>
+              )}
             </div>
 
             {/* Instructor Roster */}
