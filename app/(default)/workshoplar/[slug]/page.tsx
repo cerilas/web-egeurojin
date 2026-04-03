@@ -198,7 +198,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   href={workshop.registrationUrl}
                   className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-800"
                 >
-                  Ön Kayıt İçin İletişime Geç
+                  Kayıt Ol
                 </Link>
               )}
             </div>
